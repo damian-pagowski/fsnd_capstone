@@ -2,12 +2,9 @@ import os
 from flask import Flask, request, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-# from .database.models import db_drop_and_create_all, setup_db, Drink
-from database.models import db_drop_and_create_all, setup_db, Drink
+from database.models import db_drop_and_create_all, setup_db, Actor, Movie
 from sqlalchemy import exc
 from auth.auth import AuthError, requires_auth
-# from .auth.auth import AuthError, requires_auth
-
 import json
 
 
@@ -21,9 +18,13 @@ def create_app(test_config=None):
 app = create_app()
 setup_db(app)
 
-# app.app_context().push()
+# db_drop_and_create_all()
 
-db_drop_and_create_all()
+
+#  GET /actors and /movies
+# * DELETE /actors/ and /movies/
+# * POST /actors and /movies and
+# * PATCH /actors/ and /movies/
 
 
 @app.route('/', methods=['GET'])
@@ -31,52 +32,84 @@ def hello():
     return jsonify({"status": "ok"})
 
 
-@app.route('/drinks')
-def get_drinks_short():
-    drinks = []
-    print("ROUTE")
+##########################################
+#   ACTORS
+##########################################
+
+@app.route('/actors')
+def get_actors():
+    actors = []
+    print("/actors")
     try:
-        drinks_data = Drink.query.all()
-        drinks = list(map(Drink.short, drinks_data))
+        actors_data = Actor.query.all()
+        actors = list(map(Actor.format, actors_data))
     except:
         abort(422)
     return jsonify({
         'success': True,
-        'drinks': drinks
+        'actors': actors
     })
 
-
-@app.route('/drinks', methods=['POST'])
-def create_drink():
+@app.route('/actors', methods=['POST'])
+def create_actor():
     body = request.get_json()
-    req_title = body.get('title')
-    req_recipe = body.get('recipe')
-    if not isinstance(req_recipe, list):
-        abort(422)
-    for each in req_recipe:
-        if not('color' in each and 'parts' in each):
-            abort(422)
+    name = body.get('name')
+    age = body.get('age')
+    gender = body.get('gender')
+    movie_id = body.get('movie_id')
     try:
-        drink = Drink(title=req_title, recipe=json.dumps(req_recipe))
-        drink.insert()
-        return jsonify({"success": True, "drinks": [drink.long()]})
+        actor = Actor(name, age, gender, movie_id)
+        print(actor.format())
+        actor.insert()
+        return jsonify({"success": True, "actor": actor.format()})
     except:
         abort(422)
 
+##########################################
+#   MOVIES
+##########################################
 
-@app.route('/drinks-detail')
-@requires_auth('get:drinks-detail')
-def get_drinks_details(payload):
-    drinks = []
+@app.route('/movies')
+def get_movies():
+    movies = []
+    print("/movies")
     try:
-        drinks_data = Drink.query.all()
-        drinks = list(map(Drink.long, drinks_data))
+        movie_data = Movie.query.all()
+        movies = list(map(Movie.format, movie_data))
     except:
         abort(422)
     return jsonify({
         'success': True,
-        'drinks': drinks
+        'movies': movies
     })
+
+@app.route('/movies',  methods=['POST'])
+def create_movie():
+    body = request.get_json()
+    title = body.get('title')
+    relese_date = body.get('relese_date')
+    try:
+        movie = Movie(title,relese_date)
+        print(movie.format())
+        movie.insert()
+        return jsonify({"success": True, "movie": movie.format()})
+    except:
+        abort(422)
+
+
+# @app.route('/drinks-detail')
+# @requires_auth('get:drinks-detail')
+# def get_drinks_details(payload):
+#     drinks = []
+#     try:
+#         drinks_data = Drink.query.all()
+#         drinks = list(map(Drink.long, drinks_data))
+#     except:
+#         abort(422)
+#     return jsonify({
+#         'success': True,
+#         'drinks': drinks
+#     })
 
 
 # Error Handling
