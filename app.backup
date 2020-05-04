@@ -1,0 +1,7 @@
+{
+  "name": "damians-app",
+  "description": "Heroku deployable app. udacity fsnd capstone project",
+  "image": "heroku/python",
+  "keywords": ["python" ],
+  "author": "Damian"
+}
