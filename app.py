@@ -4,6 +4,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
 
+
+port = int(os.environ.get('SERVER_PORT',3030))
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
@@ -21,4 +24,4 @@ def hello():
 
 
 if __name__ == '__main__':
-    APP.run(host='0.0.0.0', port=8080, debug=True)
+    APP.run(host='0.0.0.0', port=port, debug=True)
