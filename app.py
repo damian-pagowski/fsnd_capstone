@@ -21,9 +21,8 @@ setup_db(app)
 # db_drop_and_create_all()
 
 
-#  GET /actors and /movies
 # * DELETE /actors/ and /movies/
-# * POST /actors and /movies and
+
 # * PATCH /actors/ and /movies/
 
 
@@ -36,6 +35,8 @@ def hello():
 #   ACTORS
 ##########################################
 
+
+#  GET /actors
 @app.route('/actors')
 def get_actors():
     actors = []
@@ -50,6 +51,7 @@ def get_actors():
         'actors': actors
     })
 
+#  POST /actors
 @app.route('/actors', methods=['POST'])
 def create_actor():
     body = request.get_json()
@@ -65,10 +67,46 @@ def create_actor():
     except:
         abort(422)
 
+#  DELETE /actors
+@app.route('/actors/<id>', methods=['DELETE'])
+def remove_actor(id):
+    try:
+        actor = Actor.query.get(id)
+        actor.delete()
+        return jsonify({"success": True, "status": "deleted"})
+    except:
+        abort(422)
+
+#  PATCH /actors
+@app.route('/actors/<id>', methods=['PATCH'])
+def update_actor(id):
+    body = request.get_json()
+    name = body.get('name')
+    age = body.get('age')
+    gender = body.get('gender')
+    movie_id = body.get('movie_id')
+    try:
+        actor = Actor.query.get(id)
+        if name != None:
+            actor.name = name
+        if age != None:
+            actor.age = age
+        if gender != None:
+            actor.gender = gender
+        if movie_id != None:
+            actor.movie_id = movie_id
+
+        print(actor.format())
+        actor.update()
+        return jsonify({"success": True, "actor": actor.format()})
+    except:
+        abort(422)
+
 ##########################################
 #   MOVIES
 ##########################################
 
+#  GET movies
 @app.route('/movies')
 def get_movies():
     movies = []
@@ -83,13 +121,14 @@ def get_movies():
         'movies': movies
     })
 
+#  POST movies
 @app.route('/movies',  methods=['POST'])
 def create_movie():
     body = request.get_json()
     title = body.get('title')
     relese_date = body.get('relese_date')
     try:
-        movie = Movie(title,relese_date)
+        movie = Movie(title, relese_date)
         print(movie.format())
         movie.insert()
         return jsonify({"success": True, "movie": movie.format()})
