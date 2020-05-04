@@ -5,14 +5,11 @@ import json
 
 database_filename = "database.db"
 project_dir = os.path.dirname(os.path.abspath(__file__))
-database_path = "sqlite:///{}".format(os.path.join(project_dir, database_filename))
+database_path = "sqlite:///{}".format(
+    os.path.join(project_dir, database_filename))
 
 db = SQLAlchemy()
 
-'''
-setup_db(app)
-    binds a flask application and a SQLAlchemy service
-'''
 def setup_db(app):
     app.config["SQLALCHEMY_DATABASE_URI"] = database_path
     print(database_path)
@@ -20,90 +17,59 @@ def setup_db(app):
     db.app = app
     db.init_app(app)
 
-'''
-db_drop_and_create_all()
-    drops the database tables and starts fresh
-    can be used to initialize a clean database
-    !!NOTE you can change the database_filename variable to have multiple verisons of a database
-'''
 def db_drop_and_create_all():
-    # with app.app_context():
     db.drop_all()
     db.create_all()
 
 '''
-Drink
-a persistent drink entity, extends the base SQLAlchemy Model
+Movies with attributes title and release date
 '''
-class Drink(db.Model):
-    # Autoincrementing, unique primary key
+class Movie(db.Model):
+    __tablename__ = 'movie'
     id = Column(Integer().with_variant(Integer, "sqlite"), primary_key=True)
-    # String Title
     title = Column(String(80), unique=True)
-    # the ingredients blob - this stores a lazy json blob
-    # the required datatype is [{'color': string, 'name':string, 'parts':number}]
-    recipe =  Column(String(180), nullable=False)
+    relese_date = db.Column(db.DateTime, nullable=False)
+    actors = db.relationship('Actor', backref="movie", lazy=True)
 
-    '''
-    short()
-        short form representation of the Drink model
-    '''
-    def short(self):
-        short_recipe = [{'color': r['color'], 'parts': r['parts']} for r in json.loads(self.recipe)]
-        return {
-            'id': self.id,
-            'title': self.title,
-            'recipe': short_recipe
-        }
+    def __init__(self, title, relese_date):
+        self.title = title
+        self.relese_date = relese_date
 
-
-    '''
-    long()
-        long form representation of the Drink model
-    '''
-    def long(self):
-        return {
-            'id': self.id,
-            'title': self.title,
-            'recipe': json.loads(self.recipe)
-        }
-
-    '''
-    insert()
-        inserts a new model into a database
-        the model must have a unique name
-        the model must have a unique id or null id
-        EXAMPLE
-            drink = Drink(title=req_title, recipe=req_recipe)
-            drink.insert()
-    '''
     def insert(self):
         db.session.add(self)
         db.session.commit()
 
-    '''
-    delete()
-        deletes a new model into a database
-        the model must exist in the database
-        EXAMPLE
-            drink = Drink(title=req_title, recipe=req_recipe)
-            drink.delete()
-    '''
     def delete(self):
         db.session.delete(self)
         db.session.commit()
 
-    '''
-    update()
-        updates a new model into a database
-        the model must exist in the database
-        EXAMPLE
-            drink = Drink.query.filter(Drink.id == id).one_or_none()
-            drink.title = 'Black Coffee'
-            drink.update()
-    '''
     def update(self):
         db.session.commit()
+ 
+'''
+Actors with attributes name, age and gender
+'''
+class Actor(db.Model):
+    __tablename__ = 'Actor'
+    id = db.Column(db.Integer, primary_key=True)
+    movie_id = db.Column(db.Integer, db.ForeignKey(
+        'movie.id'), nullable=True)
+    name = Column(String(80), unique=True)
+    age = Column(Integer().with_variant(Integer, "sqlite"))
+    gender = Column(String(80))
 
-    def __repr__(self):
-        return json.dumps(self.short())
+    def __init__(self, name, age, gender, movie_id=None):
+        self.name = artist_id
+        self.age = age
+        self.gender = gender
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
