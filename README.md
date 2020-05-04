@@ -38,11 +38,159 @@ python app.py
 * Actors with attributes name, age and gender
 
 ## API Endpoints:
-* GET /actors and /movies
-* DELETE /actors/ and /movies/
-* POST /actors and /movies and
-* PATCH /actors/ and /movies/
+#### GET /actors
+* Parameters: none
+* Example response 
+```
+{
+  "actors": [
+    {
+      "age": 100,
+      "gender": "M",
+      "id": 1,
+      "movie_id": 1,
+      "name": "Stallone"
+    }
+  ],
+  "success": true
+}
+```
+#### GET /movies
+* Parameters: none
+* Example response 
+```
+{
+  "movies": [
+    {
+      "actors": [
+        {
+          "age": 100,
+          "gender": "M",
+          "id": 1,
+          "movie_id": 1,
+          "name": "Stallone"
+        }
+      ],
+      "id": 1,
+      "relese_date": "1980",
+      "title": "Rambo"
+    }
+  ],
+  "success": true
+}
+```
+#### POST /movies 
+* request body
+```
+{"title": "Rambo", "relese_date" : 1980}
+```
+* response
+```
+{
+  "movie": {
+    "actors": [],
+    "id": 1,
+    "relese_date": "1980",
+    "title": "Rambo"
+  },
+  "success": true
+}
+```
+#### POST /actors 
+* Request body:
+```
+{
+    "name": "Stallone",
+    "age": "100",
+    "gender": "M",
+    "movie_id": 1
+}
+```
+* Example response
+```
+{
+  "actor": {
+    "age": 100,
+    "gender": "M",
+    "id": 1,
+    "movie_id": 1,
+    "name": "Stallone"
+  },
+  "success": true
+}
+```
 
+#### DELETE /actors/<id>
+
+* Parameters: actor_id
+* Example response 
+```
+{
+  "status": "deleted",
+  "success": true
+}
+```
+
+#### DELETE /movies/<id>
+
+* Parameters: movie_id
+* Example response 
+```
+{
+  "status": "deleted",
+  "success": true
+}
+```
+#### PATCH /actors/<id>
+
+* Parameters: actor_id
+* Request body example:
+```
+{
+"name": "Stallone", 
+"age": "150"
+}
+```
+* Example response 
+```
+{
+  "actor": {
+    "age": 150,
+    "gender": "M",
+    "id": 1,
+    "movie_id": 1,
+    "name": "Stallone"
+  },
+  "success": true
+}
+```
+#### PATCH /movies/<id>
+
+* Parameters: movie_id
+* Request body example:
+```
+{"title": "Rambo", "relese_date" : 1983}
+```
+* Example response 
+```
+{
+  "movie": {
+    "actors": [
+      {
+        "age": 150,
+        "gender": "M",
+        "id": 1,
+        "movie_id": 1,
+        "name": "Stallone"
+      }
+    ],
+    "id": 1,
+    "relese_date": "1983",
+    "title": "Rambo"
+  },
+  "success": true
+}
+```
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

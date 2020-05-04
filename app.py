@@ -18,7 +18,11 @@ setup_db(app)
 
 
 # recreate db
-db_drop_and_create_all()
+FLASK_ENV = os.environ.get("FLASK_ENV", "NOT_DEV")
+print("MODE: " + FLASK_ENV)
+if FLASK_ENV != "development":
+  print("Recreating database")
+  db_drop_and_create_all()
 
 @app.route('/', methods=['GET'])
 def hello():
