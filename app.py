@@ -16,6 +16,10 @@ def create_app(test_config=None):
 app = create_app()
 setup_db(app)
 
+
+# recreate db
+db_drop_and_create_all()
+
 @app.route('/', methods=['GET'])
 def hello():
     return jsonify({"status": "ok"})
