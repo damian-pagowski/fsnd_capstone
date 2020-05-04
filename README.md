@@ -200,17 +200,27 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 ### Roles
 * Casting Assistant
-Can view actors and movies
-
+```
+get:movies
+get:actors
+```
 * Casting Director
-All permissions a Casting Assistant has and…
-Add or delete an actor from the database
-Modify actors or movies
-
+```
+get:movies
+get:actors
+update:movies
+update:actors
+delete:actors
+```
 * Executive Producer
-All permissions a Casting Director has and…
-Add or delete a movie from the database
-
+```
+get:movies
+get:actors
+update:movies
+update:actors
+delete:actors
+delete:movies
+```
 
 ## Testing
 
