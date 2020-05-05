@@ -27,7 +27,7 @@ Movies with attributes title and release date
 class Movie(db.Model):
     __tablename__ = 'movie'
     id = Column(Integer().with_variant(Integer, "sqlite"), primary_key=True)
-    title = Column(String(80), unique=True)
+    title = Column(String(80))
     relese_date = Column(String(80))
     actors = db.relationship('Actor', backref="movie", lazy=True)
 

@@ -230,7 +230,19 @@ delete:movies
 
 ## Testing
 
+* Prerequisites
 
+It is required to provide JWT tokens to run tests as environment variables:
+```
+export ASSISTANT_TOKEN=
+export DIRECTOR_TOKEN=
+export PRODUCER_TOKEN=
+```
+
+* Running tests
+```
+python3 -m pytest test_app.py 
+```
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
