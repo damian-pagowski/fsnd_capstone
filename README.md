@@ -14,10 +14,13 @@ The Casting Agency models a company that is responsible for creating movies and 
 
 ## Installation
 
-Set up environment variables
+Set up environment variables. Example for Linux:
 
 ```bash
-./setup.sh
+export FLASK_APP=app
+export FLASK_ENV=development
+export AUTH0_DOMAIN=[my_Auth0_app_domain]
+export API_AUDIENCE=[my_api_id_up_with_Auth0]
 ```
 Install dependencies
 
@@ -208,6 +211,7 @@ get:actors
 ```
 get:movies
 get:actors
+create:actors
 update:movies
 update:actors
 delete:actors
@@ -216,6 +220,8 @@ delete:actors
 ```
 get:movies
 get:actors
+create:actors
+create:movies
 update:movies
 update:actors
 delete:actors

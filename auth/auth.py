@@ -5,11 +5,26 @@ from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
 from os import environ
+import sys
 
-AUTH0_DOMAIN = environ.get('AUTH0_DOMAIN', 'dev-bj-06a8j.auth0.com')
+AUTH0_DOMAIN = environ.get('AUTH0_DOMAIN')
 ALGORITHMS = ['RS256']
-API_AUDIENCE = environ.get('API_AUDIENCE', 'coffee-api')
+API_AUDIENCE = environ.get('AUTH0_AUDIENCE')
 
+# when error occurs
+def check_sys_variables_set():
+    should_exit = False
+    error_message = "Env variable(s) not set: "
+    if AUTH0_DOMAIN == None:
+        error_message += "AUTH0_DOMAIN, "
+        should_exit = True
+    if API_AUDIENCE == None:
+        should_exit = True
+        error_message += "API_AUDIENCE, "
+    if should_exit:
+        sys.exit(error_message)
+
+check_sys_variables_set()
 
 # AuthError Exception
 
@@ -121,9 +136,10 @@ def requires_auth(permission=''):
     def requires_auth_decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
-            token = get_token_auth_header()
-            payload = verify_decode_jwt(token)
+            payload = {}
             try:
+                token = get_token_auth_header()
+                payload = verify_decode_jwt(token)
                 check_permissions(permission, payload)
             except:
                 return abort(403)

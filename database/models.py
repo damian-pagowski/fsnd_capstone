@@ -54,7 +54,6 @@ class Movie(db.Model):
             "actors": list(map(Actor.format, self.actors))
         }
 
-
 '''
 Actors with attributes name, age and gender
 '''
