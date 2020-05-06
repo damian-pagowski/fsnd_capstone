@@ -10,6 +10,7 @@ database_path = "sqlite:///{}".format(
 
 db = SQLAlchemy()
 
+
 def setup_db(app):
     app.config["SQLALCHEMY_DATABASE_URI"] = database_path
     print(database_path)
@@ -17,13 +18,17 @@ def setup_db(app):
     db.app = app
     db.init_app(app)
 
+
 def db_drop_and_create_all():
     db.drop_all()
     db.create_all()
 
+
 '''
 Movies with attributes title and release date
 '''
+
+
 class Movie(db.Model):
     __tablename__ = 'movie'
     id = Column(Integer().with_variant(Integer, "sqlite"), primary_key=True)
@@ -54,9 +59,12 @@ class Movie(db.Model):
             "actors": list(map(Actor.format, self.actors))
         }
 
+
 '''
 Actors with attributes name, age and gender
 '''
+
+
 class Actor(db.Model):
     __tablename__ = 'Actor'
     id = db.Column(db.Integer, primary_key=True)

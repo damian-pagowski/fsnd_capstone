@@ -12,26 +12,31 @@ ALGORITHMS = ['RS256']
 API_AUDIENCE = environ.get('AUTH0_AUDIENCE')
 
 # when error occurs
+
+
 def check_sys_variables_set():
     should_exit = False
     error_message = "Env variable(s) not set: "
-    if AUTH0_DOMAIN == None:
+    if AUTH0_DOMAIN is None:
         error_message += "AUTH0_DOMAIN, "
         should_exit = True
-    if API_AUDIENCE == None:
+    if API_AUDIENCE is None:
         should_exit = True
         error_message += "API_AUDIENCE, "
     if should_exit:
         sys.exit(error_message)
 
+
 check_sys_variables_set()
 
 # AuthError Exception
+
 
 class AuthError(Exception):
     def __init__(self, error, status_code):
         self.error = error
         self.status_code = status_code
+
 
 def get_token_auth_header():
     """Obtains the Access Token from the Authorization Header
@@ -65,6 +70,7 @@ def get_token_auth_header():
     token = parts[1]
     return token
 
+
 def check_permissions(permission, payload):
     if 'permissions' not in payload:
         raise AuthError({
@@ -78,6 +84,7 @@ def check_permissions(permission, payload):
             'description': 'Permission not found.'
         }, 403)
     return True
+
 
 def verify_decode_jwt(token):
     jsonurl = urlopen('https://' + AUTH0_DOMAIN + '/.well-known/jwks.json')
@@ -120,7 +127,8 @@ def verify_decode_jwt(token):
         except jwt.JWTClaimsError:
             raise AuthError({
                 'code': 'invalid_claims',
-                'description': 'Incorrect claims. Please, check the audience and issuer.'
+                'description': 'Incorrect claims. \
+                Please, check the audience and issuer.'
             }, 401)
         except Exception:
             raise AuthError({
@@ -132,17 +140,15 @@ def verify_decode_jwt(token):
                 'description': 'Unable to find the appropriate key.'
     }, 400)
 
+
 def requires_auth(permission=''):
     def requires_auth_decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
             payload = {}
-            try:
-                token = get_token_auth_header()
-                payload = verify_decode_jwt(token)
-                check_permissions(permission, payload)
-            except:
-                return abort(403)
+            token = get_token_auth_header()
+            payload = verify_decode_jwt(token)
+            check_permissions(permission, payload)
             return f(payload, *args, **kwargs)
 
         return wrapper

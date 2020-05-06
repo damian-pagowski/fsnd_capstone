@@ -42,14 +42,14 @@ def test_asistant_can_list_movies(client):
     headers = {
         'Authorization': 'Bearer {}'.format(ASSISTANT_TOKEN)
     }
-    response = client.get('/movies',  headers=headers)
+    response = client.get('/movies', headers=headers)
     assert response.status_code == 200
 
 
 def test_asistant_can_not_create_movies(client):
     headers = {
         'Authorization': 'Bearer {}'.format(ASSISTANT_TOKEN)}
-    response = client.post('/movies',  headers=headers,
+    response = client.post('/movies', headers=headers,
                            content_type='application/json',
                            data=json.dumps(dict(
                                relese_date='2020',
@@ -62,7 +62,7 @@ def test_asistant_can_not_create_movies(client):
 def test_asistant_can_not_create_actors(client):
     headers = {
         'Authorization': 'Bearer {}'.format(ASSISTANT_TOKEN)}
-    response = client.post('/actors',  headers=headers,
+    response = client.post('/actors', headers=headers,
                            content_type='application/json',
                            data=json.dumps(dict(
                                age=70,
@@ -77,21 +77,21 @@ def test_asistant_can_not_create_actors(client):
 def test_asistant_can_not_delete_actors(client):
     headers = {
         'Authorization': 'Bearer {}'.format(ASSISTANT_TOKEN)}
-    response = client.delete('/actors/1',  headers=headers)
+    response = client.delete('/actors/1', headers=headers)
     assert response.status_code == 403
 
 
 def test_asistant_can_not_delete_movies(client):
     headers = {
         'Authorization': 'Bearer {}'.format(ASSISTANT_TOKEN)}
-    response = client.delete('/movies/1',  headers=headers)
+    response = client.delete('/movies/1', headers=headers)
     assert response.status_code == 403
 
 
 def test_asistant_can_not_update_actors(client):
     headers = {
         'Authorization': 'Bearer {}'.format(ASSISTANT_TOKEN)}
-    response = client.patch('/actors/1',  headers=headers,
+    response = client.patch('/actors/1', headers=headers,
                             content_type='application/json',
                             data=json.dumps(dict(
                                 age=99,
@@ -99,13 +99,14 @@ def test_asistant_can_not_update_actors(client):
                             )
     assert response.status_code == 403
 
+
 def test_asistant_can_not_update_movies(client):
     headers = {
         'Authorization': 'Bearer {}'.format(ASSISTANT_TOKEN)}
-    response = client.patch('/movies/1',  headers=headers,
-                           content_type='application/json',
-                           data=json.dumps(dict(
-                               title="Bloodsport XXV"
-                           )),
-                           )
+    response = client.patch('/movies/1', headers=headers,
+                            content_type='application/json',
+                            data=json.dumps(dict(
+                                title="Bloodsport XXV"
+                            )),
+                            )
     assert response.status_code == 403

@@ -33,23 +33,23 @@ def hello():
     error = False
     error_message = "Set required environment variables before run: "
     AUTH0_DOMAIN = os.environ.get('AUTH0_DOMAIN')
-    if AUTH0_DOMAIN == None:
-      error = True
-      error_message += "AUTH0_DOMAIN"
+    if AUTH0_DOMAIN is None:
+        error = True
+        error_message += "AUTH0_DOMAIN"
     AUTH0_AUDIENCE = os.environ.get('AUTH0_AUDIENCE')
-    if AUTH0_AUDIENCE == None:
-      error = True
-      error_message += "AUTH0_AUDIENCE"
+    if AUTH0_AUDIENCE is None:
+        error = True
+        error_message += "AUTH0_AUDIENCE"
     AUTH0_CLIENT_ID = os.environ.get('AUTH0_CLIENT_ID')
-    if AUTH0_CLIENT_ID == None:
-      error = True
-      error_message += "AUTH0_CLIENT_ID"
+    if AUTH0_CLIENT_ID is None:
+        error = True
+        error_message += "AUTH0_CLIENT_ID"
     AUTH0_CB_URL = os.environ.get('AUTH0_CB_URL')
-    if AUTH0_CB_URL == None:
-      error = True
-      error_message += "AUTH0_CB_URL"
+    if AUTH0_CB_URL is None:
+        error = True
+        error_message += "AUTH0_CB_URL"
     if error:
-      print(error_message)
+        print(error_message)
 
     link = "https://"
     link += AUTH0_DOMAIN
@@ -80,7 +80,7 @@ def get_actors(payload):
     try:
         actors_data = Actor.query.all()
         actors = list(map(Actor.format, actors_data))
-    except:
+    except BaseException:
         abort(422)
     return jsonify({
         'success': True,
@@ -103,7 +103,7 @@ def create_actor(payload):
         print(actor.format())
         actor.insert()
         return jsonify({"success": True, "actor": actor.format()})
-    except:
+    except BaseException:
         abort(422)
 
 #  DELETE /actors
@@ -114,7 +114,7 @@ def remove_actor(payload, id):
         actor = Actor.query.get(id)
         actor.delete()
         return jsonify({"success": True, "status": "deleted"})
-    except:
+    except BaseException:
         abort(422)
 
 #  PATCH /actors
@@ -130,19 +130,19 @@ def update_actor(payload, id):
         movie_id = body.get('movie_id')
         #
         actor = Actor.query.get(id)
-        if name != None:
+        if name is not None:
             actor.name = name
-        if age != None:
+        if age is not None:
             actor.age = age
-        if gender != None:
+        if gender is not None:
             actor.gender = gender
-        if movie_id != None:
+        if movie_id is not None:
             actor.movie_id = movie_id
 
         print(actor.format())
         actor.update()
         return jsonify({"success": True, "actor": actor.format()})
-    except:
+    except BaseException:
         abort(422)
 
 ##########################################
@@ -158,7 +158,7 @@ def get_movies(payload):
     try:
         movie_data = Movie.query.all()
         movies = list(map(Movie.format, movie_data))
-    except:
+    except BaseException:
         abort(422)
     return jsonify({
         'success': True,
@@ -166,7 +166,7 @@ def get_movies(payload):
     })
 
 #  POST movies
-@app.route('/movies',  methods=['POST'])
+@app.route('/movies', methods=['POST'])
 @requires_auth('create:movies')
 def create_movie(payload):
     try:
@@ -179,7 +179,7 @@ def create_movie(payload):
         print(movie.format())
         movie.insert()
         return jsonify({"success": True, "movie": movie.format()})
-    except:
+    except BaseException:
         abort(422)
 
 #  DELETE /movies
@@ -190,7 +190,7 @@ def remove_movie(payload, id):
         movie = Movie.query.get(id)
         movie.delete()
         return jsonify({"success": True, "status": "deleted"})
-    except:
+    except BaseException:
         abort(422)
 
 #  PATCH /movies
@@ -204,15 +204,15 @@ def update_movie(payload, id):
         relese_date = body.get('relese_date')
         #
         movie = Movie.query.get(id)
-        if title != None:
+        if title is not None:
             movie.title = title
-        if relese_date != None:
+        if relese_date is not None:
             movie.relese_date = relese_date
 
         print(movie.format())
         movie.update()
         return jsonify({"success": True, "movie": movie.format()})
-    except:
+    except BaseException:
         abort(422)
 
 # Error Handling
@@ -250,6 +250,15 @@ def forbidden(error):
         "error": 403,
         "message": "Forbidden"
     }), 403
+
+
+@app.errorhandler(AuthError)
+def auth_error(error):
+    return jsonify({
+        "success": False,
+        "error": error.status_code,
+        "message": error.error
+    }), error.status_code
 
 
 if __name__ == '__main__':
